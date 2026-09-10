@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/myeyllkw";
+
 type Fields = {
   name: string;
   email: string;
@@ -47,6 +49,8 @@ export default function ContactForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
   const [touched, setTouched] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   function update<K extends keyof Fields>(key: K, value: Fields[K]) {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -55,13 +59,54 @@ export default function ContactForm() {
     }
   }
 
-  function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setTouched(true);
+    setSubmitError(null);
     const next = validate(values);
     setErrors(next);
-    if (Object.keys(next).length === 0) {
+    if (Object.keys(next).length > 0) return;
+
+    setSending(true);
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: values.name.trim(),
+          email: values.email.trim(),
+          phone: values.phone.trim(),
+          company: values.company.trim(),
+          service: values.service,
+          message: values.message.trim(),
+          _subject: `Elliott Shield inquiry — ${values.service || "general"}`,
+        }),
+      });
+
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+        errors?: unknown;
+      };
+
+      if (!res.ok) {
+        throw new Error(
+          data.error || "Something went wrong sending your request. Please try again.",
+        );
+      }
+
       setSubmitted(true);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong sending your request. Please try again.",
+      );
+    } finally {
+      setSending(false);
     }
   }
 
@@ -95,6 +140,7 @@ export default function ContactForm() {
             setValues(INITIAL);
             setErrors({});
             setTouched(false);
+            setSubmitError(null);
           }}
         >
           Send another message
@@ -104,7 +150,7 @@ export default function ContactForm() {
   }
 
   const fieldClass =
-    "mt-1.5 w-full rounded-xl border border-slate-soft bg-white px-4 py-3 text-sm text-navy shadow-sm outline-none transition placeholder:text-slate-light focus:border-teal focus:ring-2 focus:ring-teal/20";
+    "mt-1.5 w-full rounded-xl border border-slate-soft bg-white px-4 py-3 text-sm text-navy shadow-sm outline-none transition placeholder:text-slate-light focus:border-teal focus:ring-2 focus:ring-teal/20 disabled:opacity-60";
   const labelClass = "block text-sm font-medium text-navy";
   const errorClass = "mt-1.5 text-xs text-red-600";
 
@@ -122,6 +168,7 @@ export default function ContactForm() {
             className={fieldClass}
             value={values.name}
             onChange={(e) => update("name", e.target.value)}
+            disabled={sending}
             aria-invalid={!!errors.name}
             aria-describedby={errors.name ? "name-error" : undefined}
           />
@@ -143,6 +190,7 @@ export default function ContactForm() {
             className={fieldClass}
             value={values.email}
             onChange={(e) => update("email", e.target.value)}
+            disabled={sending}
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? "email-error" : undefined}
           />
@@ -168,6 +216,7 @@ export default function ContactForm() {
             placeholder="(206) 555-0100"
             value={values.phone}
             onChange={(e) => update("phone", e.target.value)}
+            disabled={sending}
             aria-invalid={!!errors.phone}
             aria-describedby={errors.phone ? "phone-error" : undefined}
           />
@@ -188,6 +237,7 @@ export default function ContactForm() {
             className={fieldClass}
             value={values.company}
             onChange={(e) => update("company", e.target.value)}
+            disabled={sending}
           />
         </div>
       </div>
@@ -202,6 +252,7 @@ export default function ContactForm() {
           className={fieldClass}
           value={values.service}
           onChange={(e) => update("service", e.target.value)}
+          disabled={sending}
           aria-invalid={!!errors.service}
           aria-describedby={errors.service ? "service-error" : undefined}
         >
@@ -233,6 +284,7 @@ export default function ContactForm() {
           placeholder="Site location, hours needed, start date…"
           value={values.message}
           onChange={(e) => update("message", e.target.value)}
+          disabled={sending}
           aria-invalid={!!errors.message}
           aria-describedby={errors.message ? "message-error" : undefined}
         />
@@ -243,14 +295,21 @@ export default function ContactForm() {
         )}
       </div>
 
+      {submitError && (
+        <p className="text-sm text-red-600" role="alert">
+          {submitError}
+        </p>
+      )}
+
       <button
         type="submit"
-        className="inline-flex w-full items-center justify-center rounded-full bg-teal px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-teal/20 transition hover:bg-[#357979] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 sm:w-auto"
+        disabled={sending}
+        className="inline-flex w-full items-center justify-center rounded-full bg-teal px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-teal/20 transition hover:bg-[#357979] focus:outline-none focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
       >
-        Send request
+        {sending ? "Sending…" : "Send request"}
       </button>
       <p className="text-xs text-slate">
-        This form is for demonstration — no data is stored on a server.
+        Submissions go securely to Elliott Shield — we typically reply within one business day.
       </p>
     </form>
   );
