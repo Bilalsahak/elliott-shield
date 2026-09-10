@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-3">
             <Image
-              src="/logo.png"
+              src="/elliott-shield/logo.png"
               alt=""
               width={40}
               height={40}

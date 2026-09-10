@@ -39,7 +39,7 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-[4.5rem] sm:px-6 lg:px-8">
         <a href="#top" className="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal rounded-sm">
           <Image
-            src="/logo.png"
+            src="/elliott-shield/logo.png"
             alt="Elliott Shield"
             width={44}
             height={44}
