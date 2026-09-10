@@ -18,8 +18,8 @@ export default function Contact() {
               <div>
                 <dt className="font-semibold text-navy">Phone</dt>
                 <dd>
-                  <a href="tel:+12065550148" className="text-slate hover:text-teal">
-                    (206) 555-0148
+                  <a href="tel:+12065504576" className="text-slate hover:text-teal">
+                    (206) 550-4576
                   </a>
                 </dd>
               </div>
@@ -33,7 +33,7 @@ export default function Contact() {
               </div>
               <div>
                 <dt className="font-semibold text-navy">Headquarters</dt>
-                <dd className="text-slate">Seattle, WA · Serving the Puget Sound</dd>
+                <dd className="text-slate">5415 6th Ave NW, Seattle, WA 98107</dd>
               </div>
             </dl>
           </div>

@@ -82,8 +82,8 @@ export default function ContactForm() {
           Thanks, {values.name.split(" ")[0]}. A member of the Elliott Shield team
           will follow up shortly — typically within one business day. For urgent
           coverage needs, call{" "}
-          <a href="tel:+12065550148" className="font-medium text-teal hover:underline">
-            (206) 555-0148
+          <a href="tel:+12065504576" className="font-medium text-teal hover:underline">
+            (206) 550-4576
           </a>
           .
         </p>

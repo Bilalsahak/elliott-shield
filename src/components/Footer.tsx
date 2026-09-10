@@ -31,14 +31,18 @@ export default function Footer() {
               <p className="text-xs font-semibold uppercase tracking-wider text-white">Contact</p>
               <ul className="mt-3 space-y-2 text-sm">
                 <li>
-                  <a href="tel:+12065550148" className="hover:text-teal">
-                    (206) 555-0148
+                  <a href="tel:+12065504576" className="hover:text-teal">
+                    (206) 550-4576
                   </a>
                 </li>
                 <li>
                   <a href="mailto:hello@elliottshield.com" className="hover:text-teal">
                     hello@elliottshield.com
                   </a>
+                </li>
+                <li className="text-slate-light">
+                  5415 6th Ave NW<br />
+                  Seattle, WA 98107
                 </li>
               </ul>
             </div>
